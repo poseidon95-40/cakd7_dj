@@ -1,21 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{post.title}}</title>
-</head>
-<body>
-    <nav>
-        <a href="/blog">blog</a>
-    </nav>
-    <h1>{{post.title}}</h1>
-    <h2>{{post.sub_title}}</h2>
-    <h4>{{post.created_at}}</h4>
+
+{% extends 'blog/base.html' %}
+{% block head_title %} {{post.title}} -blog  {% endblock %}
+{% block main_area %} 
+
+    {% if post.head_image %}
+        <img class = 'img-fluid rounded' src='{{post.head_image.url}}' alt='{{post.title}} head_image' >
+    {% else %}     
+        <img class ='img-fluid rounded' src = 'https://picsum.photos/800/200' alt = 'random_image'>
+    {% endif %}
+
+    <h1 class = 'mt-4'>{{post.title}}</h1>
+    <h5 class = 'text-muted'>{{post.hook_text}}</h5>
+    <h4>{{post.created_at}}</h4>s
     <p>{{post.content}}</p>
+    {% if post.file_upload %}
+        <a href='{{post.file_upload.url}}' class='btn btn-outLine-dark' role='button' > 
+            download :
+            {% if post.get_file_ext == 'csv' %}
+                <i class = 'fas fas-file-csv'></i>
+            {% elif post.get_file_ext == 'xlsx' or post.get_file_ext == 'xls' %}    
+                <i class = 'fas fas-file-excel'></i>
+            {% elif post.get_file_ext == 'dock' or post.get_file_ext == 'doc' %}    
+                <i class = 'fas fas-file-word'></i>
+            {% else %}
+                <i class = 'fas fas-file-file'></i>
+            {% endif %}
+            {{post.get_file_name}}
+        </a>
+
+
+
+    {% endif %}
     <p>{{post.content_comment}}</p>
     <hr/>
     <h3> here comment ? </h3>
-</body>
-</html>
+
+{% endblock %}     
