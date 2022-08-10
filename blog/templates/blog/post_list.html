@@ -1,8 +1,29 @@
 
 {% extends 'blog/base.html' %}
 
-{% block main_area %} <h1>blog</h1>
-{% comment %} {% if post_list exists %}  {% endcomment %}
+{% block main_area %} 
+    {% if user.is_authenticated %}
+        {% if user.is_superuser or user.is_staff %}
+            <a class='btn btn-info btn-sm 'float-right' href='/blog/create_post/' role='button'>
+                <i class='fas fa-pen'></i>&nbsp:&nbsp:&nbsp: new post 
+            </a>
+        {% endif %}
+    {% endif %}
+    <h1>blog
+        {% if category %}
+        <span class='badge badge-secondary'>{{category}}</span>
+        {% endif %}
+
+        {% if tag %}
+        <span class='badge badge-light'>
+            <i class='fas fa-tags'></i>
+            {{tag}}({{tag.post_set.count}})</span>
+        {% endif %}
+    </h1>
+
+{% if not post_list.exists %}
+    <h3> there is no post_list  </h3>
+{% else %}
     {% for p in post_list %}
     <div class='card mb-4' id='post-{{p.pk}}'>
         {% if p.head_image %}
@@ -18,6 +39,18 @@
             {% endif %}
             <h2 class="card-title">{{p.title}}</h2>
             <p class='cart-text'>{{p.content|truncatewords:45}}</p>
+
+            {% if p.tags.exists %}
+                <i class='fas fa-tags'></i>
+                {% for tag in p.tags.iterator %}
+                    <a href='{{tag.get_absolute_url}}'>
+                        <span class='badge badge-pill badge-light'>{{tag}}</span>        
+                    </a>
+                {% endfor %}
+                <br/>
+                <br/>
+            {% endif %}
+
             <a class='btn btn-primary' href = '{{p.get_absolute_url}}'> read morea & rarr;</a>
         </div>
 
@@ -30,11 +63,10 @@
             <h2>{{p.content_comment}}</h2>
         </div>
     </div>
+    <br>
+    <br>
     {% endfor %}
-
-{% comment %} {% else %}
-    <h3> there is no content </h3>
-{% endif %} {% endcomment %}
+{% endif %}
 
 {% endblock %}
 

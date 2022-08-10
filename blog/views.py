@@ -1,6 +1,10 @@
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView
-from .models import Post, Category
+from importlib.resources import contents
+from django.shortcuts import render, redirect
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .models import Post, Category, Tag
+from django.core.exceptions import PermissionDenied
+
 # Create your views here.
 
 class PostList(ListView):
@@ -19,12 +23,59 @@ class PostDetail(DetailView):
     def get_context_data(self, **kwargs):
         context = super(PostDetail, self).get_context_data()
         context['categories'] = Category.objects.all()
-
         print('context-categories', context['categories'] )
-        
         context['no_category_post_count'] = Post.objects.filter(category=None).count()
         return context 
 
 class Index(ListView):
     model = Post
     ordering = '-pk'
+
+class PostCreate(LoginRequiredMixin, UserPassesTestMixin , CreateView):
+    model = Post
+    fields = ['title', 'hook_text', 'content', 'head_image','file_upload', 'category']
+
+    def form_valid(self, form) :
+        current_user = self.request.user
+        if current_user.is_authenticated and (current_user.is_staff or current_user.is_superuser):
+            form.instance.author = current_user
+            return super(PostCreate, self).form_valid(form)
+        else:    
+            return redirect('/blog/')
+
+class PostUpdate(LoginRequiredMixin, UpdateView):
+    model = Post
+    fields = ['title', 'hook_text', 'content', 'head_image','file_upload', 'category', 'tags']
+
+    def dispatch(self, request, **kwargs):
+        if request.user.is_authenticated and request.user == self.get_object().author:
+            return super(PostUpdate, self).dispatch(request, *args, **kwargs)
+        else:
+            raise PermissionDenied    
+
+def category_page(request, slug):
+    if slug == 'no_category':
+        category = 'unclassified'
+        post_list = Post.objects.filter(category=None)
+    else:
+        category = Category.objects.get(slug=slug)
+        post_list = Post.objects.filter(category=category)
+
+    context = {'post_list': post_list,
+                'categories':Category.objects.all(),
+                'no_category_post_count':Post.objects.filter(category=None).count(),
+                'category':category, }
+    return render ( request, 'blog/post_list.html', context )
+
+def tag_page(request, slug):
+    
+    tag = Tag.objects.get(slug=slug)
+    post_list = tag.post_set.all()
+
+    context = {'post_list': post_list,
+                'categories':Category.objects.all(),
+                'no_category_post_count':Post.objects.filter(category=None).count(),
+                'tag':tag, }
+    return render ( request, 'blog/post_list.html', context )
+
+      
