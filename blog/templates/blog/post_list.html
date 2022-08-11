@@ -4,7 +4,7 @@
 {% block main_area %} 
     {% if user.is_authenticated %}
         {% if user.is_superuser or user.is_staff %}
-            <a class='btn btn-info btn-sm 'float-right' href='/blog/create_post/' role='button'>
+            <a class='btn btn-info btn-sm float-right' href='/blog/create_post/' role='button'>
                 <i class='fas fa-pen'></i>&nbsp:&nbsp:&nbsp: new post 
             </a>
         {% endif %}
@@ -38,7 +38,7 @@
                 <span class='badge badge-secondary float-right'> unclassified </span>
             {% endif %}
             <h2 class="card-title">{{p.title}}</h2>
-            <p class='cart-text'>{{p.content|truncatewords:45}}</p>
+            <p class='cart-text'>{{p.get_content_markdown|truncatewords_html:45 | safe}}</p>
 
             {% if p.tags.exists %}
                 <i class='fas fa-tags'></i>
