@@ -10,6 +10,10 @@
         {% endif %}
     {% endif %}
     <h1>blog
+        {% if search_info %}
+        <small class='text-muted'>{{search_info}}</small>
+        {% endif %}
+
         {% if category %}
         <span class='badge badge-secondary'>{{category}}</span>
         {% endif %}
@@ -51,7 +55,7 @@
                 <br/>
             {% endif %}
 
-            <a class='btn btn-primary' href = '{{p.get_absolute_url}}'> read morea & rarr;</a>
+            <a class='btn btn-primary' href = '{{p.get_absolute_url}}'> read more & arr;</a>
         </div>
 
             {% if p.hook_text %}
@@ -68,5 +72,28 @@
     {% endfor %}
 {% endif %}
 
+{% if is_paginated %}
+    <ul class='pagination justify-content-center mb-4' >
+        {% if page_obj.has_next %}
+            <li class='page-item'>
+                <a class='page-link' href='?page{{page_obj.next_page_number}}'> &larr;Older
+                </a>
+            </li>
+        {% else %}
+            <li class='page-item disabled'>
+                <a class='page-link' href='#'> &larr;Older </a>
+            </li>    
+        {% endif %}
+        {% if page_obj.has_previous %} 
+            <li class='page-item'>
+                <a class='page-link' href='{{page_obj_previous_page_number}}'> newer & rarr </a>
+            </li>
+        {% else %}
+            <li class='page-item disabled'>
+                <a class='page-link' href='#'> newer &rarr </a>
+            </li>
+        {% endif %} 
+    </ul>
+{% endif %}
 {% endblock %}
 
