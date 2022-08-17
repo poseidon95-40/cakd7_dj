@@ -73,6 +73,7 @@
 {% endif %}
 
 {% if is_paginated %}
+    <!-- pagination -->
     <ul class='pagination justify-content-center mb-4' >
         {% if page_obj.has_next %}
             <li class='page-item'>
@@ -84,6 +85,7 @@
                 <a class='page-link' href='#'> &larr;Older </a>
             </li>    
         {% endif %}
+        
         {% if page_obj.has_previous %} 
             <li class='page-item'>
                 <a class='page-link' href='{{page_obj_previous_page_number}}'> newer & rarr </a>
@@ -95,5 +97,6 @@
         {% endif %} 
     </ul>
 {% endif %}
+
 {% endblock %}
 

@@ -63,6 +63,13 @@ class Post(models.Model):
     def get_content_markdown(self):
         return markdown(self.content)
 
+    def get_avatar_url(self):
+        # if self.author.socialaccount_set.exist():
+        #     return self.author.socialaccount_set.first().get_avatar_url()
+        # else:
+        #     return f'https://doitdjango.com/avatar/id/1241/b75d5c5a52d05e45/svg/{self.author.id}'            
+        return f'https://doitdjango.com/avatar/id/1241/b75d5c5a52d05e45/svg/{self.author.id}' 
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -77,21 +84,9 @@ class Comment(models.Model):
         return f'{self.post.get_absolute_url()}#comment-{self.pk}'
     
     def get_avatar_url(self):
-        if self.author.socialaccount_set.exist():
-            return self.author.socialaccount_set.first().get_avatar_url()
-        else:
-            return 'http://placehold.it/50x50'            
+        # if self.author.socialaccount_set.exist():
+        #     return self.author.socialaccount_set.first().get_avatar_url()
+        # else:
+        #     return f'https://doitdjango.com/avatar/id/1241/b75d5c5a52d05e45/svg/{self.author.id}'            
+        return f'https://doitdjango.com/avatar/id/1241/b75d5c5a52d05e45/svg/{self.author.id}' 
 
-# class Comment(models.Model):
-#     post = models.ForeignKey(Post, on_delete=models.CASCADE)
-#     author = models.ForeignKey(User, on_delete=models.CASCADE)
-#     content = models.TextField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-#     modified_at = models.DateTimeField(auto_now=True)   
-
-#     def __str__(self):
-#         return f'{self.author}::{self.content}'     
-#     def get_absolute_url(self):
-#         return f'{self.post.get_absolute_url()}#comment-{self.pk}'
-    
-     
